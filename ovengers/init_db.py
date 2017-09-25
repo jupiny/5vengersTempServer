@@ -1,5 +1,5 @@
-from 5vengers.database import init_db
+from database import init_db
 
 
-if name == '__main__':
+if __name__ == '__main__':
     init_db()
