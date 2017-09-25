@@ -1,15 +1,11 @@
 from flask import request, jsonify, Response
 
-from flask_login import login_user
+from flask_login import login_user, login_required, current_user
 
 from ovengers import app
 from ovengers.models import User
 from ovengers.database import db_session
 
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
 
 @app.route('/signup/', methods=['POST'])
 def signup():
@@ -35,3 +31,29 @@ def login():
             login_user(user)
             return Response(status=200)
     return Response(status=400)
+
+@app.route('/step/', methods=['GET','PATCH'])
+@login_required
+def step():
+    if request.method == 'PATCH':
+        step = request.form['step']
+        current_user.step = step
+        db_session.add(current_user)
+        db_session.commit()
+    data = {
+        'step': current_user.step,
+    }
+    return jsonify(data)
+
+@app.route('/heart-rate/', methods=['GET','PATCH'])
+@login_required
+def heart_rate():
+    if request.method == 'PATCH':
+        heart_rate = request.form['heart_rate']
+        current_user.heart_rate = heart_rate
+        db_session.add(current_user)
+        db_session.commit()
+    data = {
+        'heart_rate': current_user.heart_rate,
+    }
+    return jsonify(data)
