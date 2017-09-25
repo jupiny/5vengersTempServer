@@ -1,6 +1,6 @@
 from flask import request, jsonify, Response
 
-from flask_login import login_user, login_required, current_user
+from flask_login import login_user, login_required, current_user, logout_user
 
 from ovengers import app
 from ovengers.models import User
@@ -57,3 +57,9 @@ def heart_rate():
         'heart_rate': current_user.heart_rate,
     }
     return jsonify(data)
+
+@app.route("/logout/")
+@login_required
+def logout():
+    logout_user()
+    return Response(status=200)
