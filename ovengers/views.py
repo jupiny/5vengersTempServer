@@ -41,28 +41,21 @@ def login():
     }
     return jsonify(data)
 
-@app.route('/step/', methods=['GET','PATCH'])
+@app.route('/userinfo/', methods=['GET','PATCH'])
 @login_required
-def step():
+def userinfo():
     if request.method == 'PATCH':
-        step = request.form['step']
-        current_user.step = step
+        step = request.form.get('step')
+        heart_rate = request.form.get('heart_rate')
+        if step:
+            current_user.step = step
+        if heart_rate:
+            current_user.heart_rate = heart_rate
         db_session.add(current_user)
         db_session.commit()
     data = {
+        'username': current_user.username,
         'step': current_user.step,
-    }
-    return jsonify(data)
-
-@app.route('/heart-rate/', methods=['GET','PATCH'])
-@login_required
-def heart_rate():
-    if request.method == 'PATCH':
-        heart_rate = request.form['heart_rate']
-        current_user.heart_rate = heart_rate
-        db_session.add(current_user)
-        db_session.commit()
-    data = {
         'heart_rate': current_user.heart_rate,
     }
     return jsonify(data)
