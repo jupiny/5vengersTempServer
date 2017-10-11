@@ -1,4 +1,5 @@
-from flask import request, jsonify, Response
+
+from flask import request, jsonify
 
 from flask_login import login_user, login_required, current_user, logout_user
 
@@ -11,26 +12,34 @@ from ovengers.database import db_session
 def signup():
     username = request.form['username']
     password = request.form['password']
+    message = '회원가입 실패'
     if username and password:
         user = User(username=username, password=password)
         db_session.add(user)
         db_session.commit()
-        return Response(status=200)
-    return Response(status=400)
+        message = '회원가입 성공'
+    data = {
+        'result': message,
+    }
+    return jsonify(data)
 
 @app.route('/login/', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
+    message = '로그인 실패'
     if username and password:
         user = User.query.filter(
             User.username == username,
             User.password == password,
-        ).first() 
+        ).first()
         if user:
             login_user(user)
-            return Response(status=200)
-    return Response(status=400)
+            message = '로그인 성공'
+    data = {
+        'result': message,
+    }
+    return jsonify(data)
 
 @app.route('/step/', methods=['GET','PATCH'])
 @login_required
@@ -62,4 +71,8 @@ def heart_rate():
 @login_required
 def logout():
     logout_user()
-    return Response(status=200)
+    message = '로그아웃 성공'
+    data = {
+        'result': message,
+    }
+    return jsonify(data)
